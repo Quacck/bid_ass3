@@ -136,8 +136,6 @@ void Game::drawTouches(const std::vector<cv::RotatedRect>& touches, int count)
 	cv::Point2f stupidPoint = (0, 0);
 
 	if (touches.size() > 0) {
-		std::cout << touches[0].center << "count: " << count << std::endl;
-
 	}
     if(count == -1 || count > touches.size())
     {
@@ -145,7 +143,6 @@ void Game::drawTouches(const std::vector<cv::RotatedRect>& touches, int count)
     }
     for(auto i = 0; i < count; i++)
     {
-		std::cout << touches[i].center << std::endl;
 		stupidPoint = touches[i].center;
         drawCircle(stupidPoint);
     }
@@ -170,7 +167,6 @@ void Game::show()
 
 void Game::drawCircle(const cv::Point2f& position)
 {
-	std::cout << position << std::endl;
     cv::circle(m_gameCanvas, m_calibrator.cameraToGame(position), 20, cv::Scalar(0, 0, 255), 5);
 }
 

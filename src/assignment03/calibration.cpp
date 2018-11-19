@@ -47,23 +47,25 @@ void HomograpyCalibrator::computeHomography()
     /*~~~~~~~~~~~*
      * YOUR CODE *
      * GOES HERE *
+	  640 x 480
      *~~~~~~~~~~~*/
 
 	std::vector<cv::Point2f> resizedCameraCorners = cameraCorners();
 	std::vector<cv::Point2f> resizedProjectionCorners = projectorCorners();
 
 	for (int i = 0; i < 4; i++) {
+		
 		resizedCameraCorners[i].x = resizedCameraCorners[i].x * 800 / (m_canvas.cols +1);
 		resizedCameraCorners[i].y = resizedCameraCorners[i].y * 600 / (m_canvas.rows +1);
+		
 
 		resizedProjectionCorners[i].x = resizedProjectionCorners[i].x * 800 / (m_canvas.cols+1);
 		resizedProjectionCorners[i].y = resizedProjectionCorners[i].y * 600/ (m_canvas.rows+1);
-
 	}
 
+	m_gameToProjector = cv::getPerspectiveTransform(Game::gameCorners(), resizedProjectionCorners);
 
 	m_cameraToGame = cv::getPerspectiveTransform(resizedCameraCorners, Game::gameCorners());
-	m_gameToProjector = cv::getPerspectiveTransform(Game::gameCorners(), resizedProjectionCorners);
 
 
 
@@ -86,19 +88,28 @@ cv::Point2f HomograpyCalibrator::cameraToGame(const cv::Point2f& point) const
 
 	cv::Mat pointMat(3, 1, CV_64FC1, 1.0f);
 	cv::Mat	resultMat(3, 1, CV_64FC1, 0.0f);
-	pointMat.at<float>(0, 0) = point.x;
-	pointMat.at<float>(1, 0) = point.y;
-	pointMat.at<float>(2, 0) = 1.0f;
+	pointMat.at<double>(0, 0) = point.x;
+	pointMat.at<double>(1, 0) = point.y;
+	pointMat.at<double>(2, 0) = 1.0f;
+	cv::Point2f resultPoint;
 
 	try {
 		resultMat =  m_cameraToGame * pointMat;
+		resultPoint = cv::Point2f(resultMat.at<double>(0, 0), resultMat.at<double>(1, 0));
+		
+		//normalize them points!!!
+		resultPoint.x /= resultMat.at<double>(3, 0);
+		resultPoint.y /= resultMat.at<double>(3, 0);
+
+
+
 
 	}
 	catch (cv::Exception e) {
 		std::cout << e.what();
 	}
 
-	cv::Point2f resultPoint = (resultMat.at<float>(0, 0), resultMat.at<float>(1, 0));
+	
 
 	return resultPoint;
 
