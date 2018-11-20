@@ -28,7 +28,7 @@ void MultitouchGameControl::handleInput(std::vector<cv::RotatedRect> positions)
 				{
 					if (currentPaddle.active())
 					{
-						if (currentPaddle.boundingBox().tl().x <= currentPosition.x <= currentPaddle.boundingBox().br().x)
+						if ((currentPaddle.boundingBox().tl().x <= currentPosition.x) && (currentPosition.x <= currentPaddle.boundingBox().br().x))
 						{
 							currentPaddle.setTargetPosition(currentPosition.y);
 							currentPaddle.setActive(false);
